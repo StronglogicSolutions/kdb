@@ -1,7 +1,7 @@
 #ifndef __DATABASE_INTERFACE_HPP__
 #define __DATABASE_INTERFACE_HPP__
 
-#include "db_structs.hpp"
+#include <db_structs.hpp>
 
 class DatabaseInterface {
  public:

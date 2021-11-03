@@ -1,6 +1,6 @@
-#ifndef __DATABASECONNECTION_HPP__
-#define __DATABASECONNECTION_HPP__
+#pragma once
 
+#include "db_structs.hpp"
 #include "database_interface.hpp"
 #include <pqxx/pqxx>
 
@@ -36,5 +36,3 @@ class DatabaseConnection : public DatabaseInterface {
   pqxx::result performDelete(T query);
   pqxx::result performUpdate(UpdateReturnQuery query, std::string returning);
 };
-
-#endif  // __DATABASECONNECTION_HPP__
