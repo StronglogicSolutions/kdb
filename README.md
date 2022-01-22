@@ -1,4 +1,4 @@
-# PSQL_ORM aka KDB
+# KDB
 
 Used by the KIQ Platform
 

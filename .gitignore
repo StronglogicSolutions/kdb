@@ -1,5 +1,5 @@
 makefiletemp
-libpsqlorm.a
+libkdb.a
 CMakeFiles
 CMakeCache.txt
 Makefile

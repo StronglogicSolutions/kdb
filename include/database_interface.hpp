@@ -1,7 +1,6 @@
-#ifndef __DATABASE_INTERFACE_HPP__
-#define __DATABASE_INTERFACE_HPP__
+#pragma once
 
-#include <db_structs.hpp>
+#include "db_structs.hpp"
 
 class DatabaseInterface {
  public:
@@ -11,6 +10,3 @@ class DatabaseInterface {
   virtual std::string query(UpdateReturnQuery query) = 0;
   virtual bool setConfig(DatabaseConfiguration config) = 0;
 };
-
-#endif  // __DATABASE_INTERFACE_HPP__
-

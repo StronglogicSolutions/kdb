@@ -16,7 +16,7 @@ using TupVec                       = std::vector<std::pair<std::string, std::str
 using FTuple                       = std::tuple<std::string, std::string, std::string>;
 using Fields                       = std::vector<std::string>;
 using StringVec                    = std::vector<std::string>;
-using QueryComparisonFilter        = std::vector<FTuple>;
+using QueryComparisonFilter        = std::vector<FTuple>;           // TODO: Should not be a vector
 using QueryComparisonBetweenFilter = std::vector<FTuple>;
 using Values                       = std::vector<std::string>;
 using QueryValue                   = std::pair<std::string, std::string>;
@@ -75,11 +75,16 @@ void Add(Ts&&... args)
   {
     const auto& key   = v[i    ];
     const auto& value = v[i + 1];
+    if (value.empty())  continue;
     m_filters.emplace_back(FilterPair{key, DoubleSingleQuotes(value)});
   }
 }
 
-bool       empty()      const { return m_filters.empty(); }
+bool       empty()      const
+{
+  auto empty_value = m_filters.empty();
+  return empty_value;
+}
 size_t     size()       const { return m_filters.size();  }
 FilterPair front()      const { return m_filters.front(); }
 FilterPair at(size_t i) const { return m_filters.at(i);   }
@@ -176,9 +181,11 @@ QueryFilter              filter;
 };
 
 struct MultiFilterSelect {
-std::string table;
-std::vector<std::string> fields;
+std::string                table;
+std::vector<std::string>   fields;
 std::vector<GenericFilter> filter;
+OrderFilter                order;
+LimitFilter                limit;
 };
 
 template <typename T>
@@ -247,11 +254,16 @@ std::string              table;
 std::vector<std::string> fields;
 T                        filter;
 Joins                    joins;
+OrderFilter              order;
+LimitFilter              limit;
 };
 
-struct SimpleJoinQuery{
+struct SimpleJoinQuery
+{
 std::string              table;
 std::vector<std::string> fields;
 QueryFilter              filter;
 Join                     join;
+OrderFilter              order;
+LimitFilter              limit;
 };
