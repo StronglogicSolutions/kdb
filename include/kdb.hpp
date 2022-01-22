@@ -13,9 +13,9 @@ KDB() : m_connection(std::move(std::unique_ptr<DatabaseConnection>{new DatabaseC
   m_connection->setConfig(
     DatabaseConfiguration{
       DatabaseCredentials{
-        .user     = kiq::config::Database::user(),
-        .password = kiq::config::Database::pass(),
-        .name     = kiq::config::Database::name()},
+        .user     = "",
+        .password = "",
+        .name     = ""},
       kiq::config::Database::host(),
       kiq::config::Database::port()
     }
