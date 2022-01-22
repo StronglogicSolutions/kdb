@@ -16,8 +16,8 @@ KDB() : m_connection(std::move(std::unique_ptr<DatabaseConnection>{new DatabaseC
         .user     = "",
         .password = "",
         .name     = ""},
-      kiq::config::Database::host(),
-      kiq::config::Database::port()
+      "",
+      ""
     }
   );
 }
