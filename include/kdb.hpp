@@ -9,7 +9,7 @@ namespace Database {
 class KDB {
  public:
   KDB() : m_connection(std::move(std::unique_ptr<DatabaseConnection>{new DatabaseConnection})) {
-    m_connection->setConfig(DatabaseConfiguration{
+    m_connection->set_config(DatabaseConfiguration{
       DatabaseCredentials{
         .user     = "",
         .password = "",
@@ -25,12 +25,12 @@ class KDB {
   KDB(DatabaseConfiguration config)
   : m_connection(std::move(std::unique_ptr<DatabaseConnection>{new DatabaseConnection}))
   {
-    m_connection->setConfig(config);
+    m_connection->set_config(config);
   }
 
   KDB(std::unique_ptr<DatabaseConnection> db_connection, DatabaseConfiguration config)
     : m_connection(std::move(db_connection)) {
-    m_connection->setConfig(config);
+    m_connection->set_config(config);
   }
   ~KDB() {
     // delete m_connection;
