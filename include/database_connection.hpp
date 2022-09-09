@@ -11,28 +11,27 @@ DatabaseConnection() {}
 DatabaseConnection(DatabaseConnection&& d)
 : m_config(std::move(d.m_config)) {}
 DatabaseConnection(const DatabaseConnection& d) = delete;
-virtual ~DatabaseConnection() {}
-virtual bool setConfig(DatabaseConfiguration config) override;
-virtual QueryResult query(DatabaseQuery query) override;
+virtual ~DatabaseConnection() final {}
 
 template <typename T>
-QueryResult query(T query);
-std::string query(InsertReturnQuery query);
-std::string query(UpdateReturnQuery query);
-std::string databaseName();
+QueryResult         query(T query);
+std::string         query(InsertReturnQuery query);
+std::string         query(UpdateReturnQuery query);
+virtual QueryResult query(DatabaseQuery query) override;
+std::string         name();
+virtual bool        set_config(DatabaseConfiguration config) override;
 
 private:
-pqxx::connection getConnection();
-std::string getConnectionString();
-pqxx::result performInsert(DatabaseQuery query);
-pqxx::result performInsert(InsertReturnQuery query, std::string returning);
+std::string         connection_string();
+pqxx::result        do_insert(DatabaseQuery query);
+pqxx::result        do_insert(InsertReturnQuery query, std::string returning);
+template <typename T>
+pqxx::result do_select(T query);
+template <typename T>
+pqxx::result do_delete(T query);
+pqxx::result do_update(UpdateReturnQuery query, std::string returning);
 
 DatabaseConfiguration   m_config;
 std::string             m_db_name;
 
-template <typename T>
-pqxx::result performSelect(T query);
-template <typename T>
-pqxx::result performDelete(T query);
-pqxx::result performUpdate(UpdateReturnQuery query, std::string returning);
 };
