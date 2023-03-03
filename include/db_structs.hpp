@@ -30,13 +30,23 @@ struct identification
   std::string user;
   std::string password;
   std::string name;
+
+  bool validate() const
+  {
+    return (!user.empty() && !password.empty() && !name.empty());
+  }
 };
 
 struct dbconfig
 {
   identification credentials;
-  std::string    address;
-  std::string    port;
+  std::string    address    {"127.0.0.1"};
+  std::string    port       {"5432"};
+
+  bool validate() const
+  {
+    return (!credentials.validate() && !address.empty() && !port.empty());
+  }
 };
 
 

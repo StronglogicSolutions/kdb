@@ -8,19 +8,17 @@
 namespace kdb {
 class KDB {
  public:
-  KDB() : m_connection(std::move(std::unique_ptr<db_cxn>{new db_cxn})) {
-    m_connection->set_config(dbconfig{
-      identification{
-        .user     = "",
-        .password = "",
-        .name     = ""},
-      "",
-      ""});
+  KDB(dbconfig config = {}) : m_connection(std::move(std::unique_ptr<db_cxn>{new db_cxn}))
+  {
+    if (!config.validate())
+      throw std::invalid_argument{"Please provide valid kdb::dbconfig object"};
+    m_connection->set_config(config);
   }
 
   KDB(KDB&& k) :
     m_connection(std::move(k.m_connection)),
-    m_credentials(std::move(k.m_credentials)) {}
+    m_credentials(std::move(k.m_credentials))
+  {}
 
   KDB(dbconfig config)
   : m_connection(std::move(std::unique_ptr<db_cxn>{new db_cxn}))
@@ -29,12 +27,12 @@ class KDB {
   }
 
   KDB(std::unique_ptr<db_cxn> db_connection, dbconfig config)
-    : m_connection(std::move(db_connection)) {
+  : m_connection(std::move(db_connection))
+  {
     m_connection->set_config(config);
   }
-  ~KDB() {
-    // delete m_connection;
-  }
+
+  ~KDB() = default;
 
 QueryValues select(std::string table, Fields fields, QueryFilter filter, uint32_t limit = 0) const
 {
