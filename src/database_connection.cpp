@@ -9,14 +9,16 @@
 #include "database_connection.hpp"
 #include "helpers.hpp"
 
-bool DatabaseConnection::set_config(DatabaseConfiguration config)
+namespace kdb
 {
-  m_config = config;
+bool db_cxn::set_config(dbconfig config)
+{
+  m_config  = config;
   m_db_name = config.credentials.name;
   return true;
 }
 
-pqxx::result DatabaseConnection::do_insert(DatabaseQuery query)
+pqxx::result db_cxn::do_insert(DatabaseQuery query)
 {
   pqxx::connection connection(connection_string().c_str());
   pqxx::work worker(connection);
@@ -26,7 +28,7 @@ pqxx::result DatabaseConnection::do_insert(DatabaseQuery query)
   return pqxx_result;
 }
 
-pqxx::result DatabaseConnection::do_insert(InsertReturnQuery query, std::string returning)
+pqxx::result db_cxn::do_insert(InsertReturnQuery query, std::string returning)
 {
   std::string table = query.table;
   pqxx::connection connection(connection_string().c_str());
@@ -37,7 +39,7 @@ pqxx::result DatabaseConnection::do_insert(InsertReturnQuery query, std::string 
   return pqxx_result;
 }
 
-pqxx::result DatabaseConnection::do_update(UpdateReturnQuery query, std::string returning)
+pqxx::result db_cxn::do_update(UpdateReturnQuery query, std::string returning)
 {
   std::string table = query.table;
   pqxx::connection connection(connection_string().c_str());
@@ -49,7 +51,7 @@ pqxx::result DatabaseConnection::do_update(UpdateReturnQuery query, std::string 
 }
 
 template <typename T>
-pqxx::result DatabaseConnection::do_select(T query)
+pqxx::result db_cxn::do_select(T query)
 {
   pqxx::connection connection(connection_string().c_str());
   pqxx::work worker(connection);
@@ -60,7 +62,7 @@ pqxx::result DatabaseConnection::do_select(T query)
 }
 
 template <typename T>
-pqxx::result DatabaseConnection::do_delete(T query)
+pqxx::result db_cxn::do_delete(T query)
 {
   pqxx::connection connection(connection_string().c_str());
   pqxx::work worker(connection);
@@ -70,7 +72,7 @@ pqxx::result DatabaseConnection::do_delete(T query)
   return pqxx_result;
 }
 
-std::string DatabaseConnection::connection_string()
+std::string db_cxn::connection_string()
 {
   std::string s{};
   s += "dbname = ";
@@ -86,7 +88,7 @@ std::string DatabaseConnection::connection_string()
   return s;
 }
 
-QueryResult DatabaseConnection::query(DatabaseQuery query)
+QueryResult db_cxn::query(DatabaseQuery query)
 {
   switch (query.type)
   {
@@ -142,7 +144,7 @@ QueryResult DatabaseConnection::query(DatabaseQuery query)
 }
 
 template <typename T>
-QueryResult DatabaseConnection::query(T query)
+QueryResult db_cxn::query(T query)
 {
   pqxx::result pqxx_result = do_select(query);
   QueryResult result{.table = query.table};
@@ -156,36 +158,36 @@ QueryResult DatabaseConnection::query(T query)
   return result;
 }
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   MultiVariantFilterSelect<std::vector<std::variant<CompFilter, CompBetweenFilter>>>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   MultiVariantFilterSelect<std::vector<std::variant<CompFilter, CompBetweenFilter, MultiOptionFilter>>>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   MultiVariantFilterSelect<std::vector<std::variant<CompBetweenFilter, QueryFilter>>>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   MultiVariantFilterSelect<std::vector<std::variant<QueryComparisonFilter, QueryFilter>>>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   JoinQuery<std::vector<std::variant<CompFilter, CompBetweenFilter>>>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   JoinQuery<std::vector<QueryFilter>>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   JoinQuery<QueryFilter>);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   SimpleJoinQuery);
 
-template QueryResult DatabaseConnection::query(
+template QueryResult db_cxn::query(
   JoinQuery<std::vector<std::variant<CompFilter, CompBetweenFilter, MultiOptionFilter>>>);
 
-template QueryResult DatabaseConnection::query<ComparisonSelectQuery>(ComparisonSelectQuery);
+template QueryResult db_cxn::query<ComparisonSelectQuery>(ComparisonSelectQuery);
 
-std::string DatabaseConnection::query(InsertReturnQuery query)
+std::string db_cxn::query(InsertReturnQuery query)
 {
   if (const pqxx::result pqxx_result = do_insert(query, query.returning); !pqxx_result.empty())
   {
@@ -196,7 +198,7 @@ std::string DatabaseConnection::query(InsertReturnQuery query)
   return "";
 }
 
-std::string DatabaseConnection::query(UpdateReturnQuery query)
+std::string db_cxn::query(UpdateReturnQuery query)
 {
   if (const pqxx::result pqxx_result = do_update(query, query.returning); !pqxx_result.empty())
   {
@@ -207,4 +209,5 @@ std::string DatabaseConnection::query(UpdateReturnQuery query)
   return "";
 }
 
-std::string DatabaseConnection::name() { return m_db_name; }
+std::string db_cxn::name() { return m_db_name; }
+} // ns kdb

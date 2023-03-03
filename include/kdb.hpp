@@ -5,12 +5,12 @@
 #include "database_connection.hpp"
 #include <memory>
 
-namespace Database {
+namespace kdb {
 class KDB {
  public:
-  KDB() : m_connection(std::move(std::unique_ptr<DatabaseConnection>{new DatabaseConnection})) {
-    m_connection->set_config(DatabaseConfiguration{
-      DatabaseCredentials{
+  KDB() : m_connection(std::move(std::unique_ptr<db_cxn>{new db_cxn})) {
+    m_connection->set_config(dbconfig{
+      identification{
         .user     = "",
         .password = "",
         .name     = ""},
@@ -22,13 +22,13 @@ class KDB {
     m_connection(std::move(k.m_connection)),
     m_credentials(std::move(k.m_credentials)) {}
 
-  KDB(DatabaseConfiguration config)
-  : m_connection(std::move(std::unique_ptr<DatabaseConnection>{new DatabaseConnection}))
+  KDB(dbconfig config)
+  : m_connection(std::move(std::unique_ptr<db_cxn>{new db_cxn}))
   {
     m_connection->set_config(config);
   }
 
-  KDB(std::unique_ptr<DatabaseConnection> db_connection, DatabaseConfiguration config)
+  KDB(std::unique_ptr<db_cxn> db_connection, dbconfig config)
     : m_connection(std::move(db_connection)) {
     m_connection->set_config(config);
   }
@@ -376,8 +376,8 @@ QueryValues select(std::string table, Fields fields,
   }
 
  private:
-  std::unique_ptr<DatabaseConnection> m_connection;
-  DatabaseCredentials m_credentials;
+  std::unique_ptr<db_cxn> m_connection;
+  identification          m_credentials;
 };
 
-}  // namespace Database
+}  // namespace kdb

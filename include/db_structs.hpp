@@ -5,7 +5,10 @@
 #include <vector>
 #include <variant>
 
-enum class QueryType {
+namespace kdb
+{
+enum class QueryType
+{
   INSERT = 0,
   DELETE = 1,
   UPDATE = 2,
@@ -16,22 +19,24 @@ using TupVec                       = std::vector<std::pair<std::string, std::str
 using FTuple                       = std::tuple<std::string, std::string, std::string>;
 using Fields                       = std::vector<std::string>;
 using StringVec                    = std::vector<std::string>;
-using QueryComparisonFilter        = std::vector<FTuple>;           // TODO: Should not be a vector
+using QueryComparisonFilter        = std::vector<FTuple>;
 using QueryComparisonBetweenFilter = std::vector<FTuple>;
 using Values                       = std::vector<std::string>;
 using QueryValue                   = std::pair<std::string, std::string>;
 using QueryValues                  = std::vector<QueryValue>;
 
-struct DatabaseCredentials {
+struct identification
+{
   std::string user;
   std::string password;
   std::string name;
 };
 
-struct DatabaseConfiguration {
-  DatabaseCredentials credentials;
-  std::string         address;
-  std::string         port;
+struct dbconfig
+{
+  identification credentials;
+  std::string    address;
+  std::string    port;
 };
 
 
@@ -267,3 +272,4 @@ Join                     join;
 OrderFilter              order;
 LimitFilter              limit;
 };
+} // ns kdb

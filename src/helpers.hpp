@@ -1,5 +1,7 @@
 #include <db_structs.hpp>
 
+namespace kdb
+{
 static const char* g_inner ="INNER JOIN ";
 static const char* g_outer = "LEFT OUTER JOIN ";
 
@@ -22,7 +24,7 @@ std::string fields_string(std::vector<std::string> fields)
 
   return field_string;
 }
-//**************************************************//
+//----------------------------------------------------
 std::string values_string(StringVec values, size_t number_of_fields)
 {
   std::string value_string{"VALUES ("};
@@ -40,17 +42,17 @@ std::string values_string(StringVec values, size_t number_of_fields)
 
   return value_string;
 }
-//**************************************************//
+//----------------------------------------------------
 static std::string order_string(const OrderFilter& filter)
 {
   return " ORDER BY " + filter.field + ' ' + filter.order;
 }
-//**************************************************//
+//----------------------------------------------------
 static std::string limit_string(const std::string& number)
 {
   return " LIMIT " + number;
 }
-//**************************************************//
+//----------------------------------------------------
 std::string get_join_string(Joins joins)
 {
   std::string join_s{};
@@ -66,14 +68,14 @@ std::string get_join_string(Joins joins)
 
   return join_s;
 }
-//**************************************************//
+//----------------------------------------------------
 std::string insert_statement(DatabaseQuery query)
 {
   return "INSERT INTO " + query.table + "("   +
           fields_string(query.fields) + ") " +
           values_string(query.values, query.fields.size());
 }
-//**************************************************//
+//----------------------------------------------------
 std::string insert_statement(InsertReturnQuery query, std::string returning)
 {
   if (returning.empty())
@@ -87,7 +89,7 @@ std::string insert_statement(InsertReturnQuery query, std::string returning)
             " RETURNING " + returning;
 }
 
-//**************************************************//
+//----------------------------------------------------
 // To filter properly, you must have the same number of values as fields
 std::string update_statement(UpdateReturnQuery query, std::string returning,
                             bool multiple = false)
@@ -116,7 +118,7 @@ std::string update_statement(UpdateReturnQuery query, std::string returning,
   }
   return "";
 }
-//**************************************************//
+//----------------------------------------------------
 template <typename T>
 std::string delete_statement(T query)
 {
@@ -148,7 +150,7 @@ value() const
 {
   return _M_out;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(const MultiOptionFilter& f)
 {
@@ -161,25 +163,25 @@ operator()(const MultiOptionFilter& f)
   }
   _M_out += ")";
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(const CompBetweenFilter& filter)
 {
   _M_out += filter.field + " BETWEEN " + filter.a + " AND " + filter.b;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(const CompFilter& filter)
 {
   _M_out += filter.a + filter.sign + filter.b;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(const QueryComparisonFilter& filter)
 {
   _M_out += std::get<0>(filter[0]) + std::get<1>(filter[0]) + std::get<2>(filter[0]);
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(const QueryFilter& filter)
 {
@@ -190,7 +192,7 @@ operator()(const QueryFilter& filter)
     delim   = " AND ";
   }
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(QueryFilter::Filters filters)
 {
@@ -201,7 +203,7 @@ operator()(QueryFilter::Filters filters)
     delim   = " AND ";
   }
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(GenericFilter filter)
 {
@@ -219,7 +221,7 @@ std::string filter_statement(T filter)
 {
   return FilterVisitor{filter}.value();
 }
-//**************************************************//
+//----------------------------------------------------
 template <typename FilterA, typename FilterB>
 std::string variant_filter_statement(std::vector<std::variant<FilterA, FilterB>> filters)
 {
@@ -237,7 +239,7 @@ std::string variant_filter_statement(std::vector<std::variant<FilterA, FilterB>>
 
   return filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 template <typename FilterA, typename FilterB, typename FilterC>
 std::string variant_filter_statement(std::vector<std::variant<FilterA, FilterB, FilterC>> filters)
 {
@@ -289,13 +291,13 @@ SelectVisitor(T query)
       _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table;
   }
 }
-//**************************************************//
+//----------------------------------------------------
 std::string
 value() const
 {
   return _M_out;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(DatabaseQuery query)
 {
@@ -321,7 +323,7 @@ operator()(DatabaseQuery query)
     _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + filter_string;
   }
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(ComparisonSelectQuery query)
 {
@@ -338,7 +340,7 @@ operator()(ComparisonSelectQuery query)
   }
   _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(ComparisonBetweenSelectQuery query)
 {
@@ -352,7 +354,7 @@ operator()(ComparisonBetweenSelectQuery query)
     filter_string += delim + filter_statement(filter);
   _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(MultiFilterSelect query)
 {
@@ -363,7 +365,7 @@ operator()(MultiFilterSelect query)
   }
   _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(MultiVariantFilterSelect<std::vector<std::variant<CompFilter, CompBetweenFilter>>> query)
 {
@@ -373,7 +375,7 @@ operator()(MultiVariantFilterSelect<std::vector<std::variant<CompFilter, CompBet
   if (query.limit.has_value()) stmt += limit_string(query.limit.count);
   _M_out = stmt;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(MultiVariantFilterSelect<std::vector<std::variant<CompFilter, CompBetweenFilter, MultiOptionFilter>>> query)
 {
@@ -383,7 +385,7 @@ operator()(MultiVariantFilterSelect<std::vector<std::variant<CompFilter, CompBet
   if (query.limit.has_value()) stmt += limit_string(query.limit.count);
   _M_out = stmt;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(MultiVariantFilterSelect<std::vector<std::variant<CompBetweenFilter, QueryFilter>>> query)
 {
@@ -393,7 +395,7 @@ operator()(MultiVariantFilterSelect<std::vector<std::variant<CompBetweenFilter, 
   if (query.limit.has_value()) stmt += limit_string(query.limit.count);
   _M_out = stmt;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(MultiVariantFilterSelect<std::vector<std::variant<QueryComparisonFilter, QueryFilter>>> query)
 {
@@ -403,21 +405,21 @@ operator()(MultiVariantFilterSelect<std::vector<std::variant<QueryComparisonFilt
   if (query.limit.has_value()) stmt += limit_string(query.limit.count);
   _M_out = stmt;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(JoinQuery<std::vector<std::variant<CompFilter, CompBetweenFilter, MultiOptionFilter>>> query)
 {
   filter_string += variant_filter_statement(query.filter);
   _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + " " + get_join_string(query.joins) + filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(SimpleJoinQuery query)
 {
   filter_string += filter_statement(query.filter);
   _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + " " + get_join_string({query.join}) + filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(JoinQuery<std::vector<QueryFilter>> query)
 {
@@ -429,7 +431,7 @@ operator()(JoinQuery<std::vector<QueryFilter>> query)
   std::string join_string = get_join_string(query.joins);
   _M_out = "SELECT " + fields_string(query.fields) + " FROM " + query.table + " " + join_string + filter_string;
 }
-//**************************************************//
+//----------------------------------------------------
 void
 operator()(JoinQuery<QueryFilter> query)
 {
@@ -439,9 +441,10 @@ operator()(JoinQuery<QueryFilter> query)
 }
 };
 
-//**************************************************//
+//----------------------------------------------------
 template <typename T>
 std::string select_statement(T query)
 {
   return SelectVisitor{query}.value();
 }
+} // ns kdb
