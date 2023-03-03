@@ -20,12 +20,6 @@ class KDB {
     m_credentials(std::move(k.m_credentials))
   {}
 
-  KDB(dbconfig config)
-  : m_connection(std::move(std::unique_ptr<db_cxn>{new db_cxn}))
-  {
-    m_connection->set_config(config);
-  }
-
   KDB(std::unique_ptr<db_cxn> db_connection, dbconfig config)
   : m_connection(std::move(db_connection))
   {
