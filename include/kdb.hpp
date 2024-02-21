@@ -28,7 +28,7 @@ class KDB {
 
   ~KDB() = default;
 
-QueryValues select(std::string table, Fields fields, QueryFilter filter, uint32_t limit = 0) const
+ResultMap select(std::string table, Fields fields, QueryFilter filter, uint32_t limit = 0) const
 {
   try
   {
@@ -51,7 +51,7 @@ QueryValues select(std::string table, Fields fields, QueryFilter filter, uint32_
   }
 }
 
-QueryValues select(std::string table, Fields fields,
+ResultMap select(std::string table, Fields fields,
                     QueryComparisonFilter filter = {})
 {
   try
@@ -76,7 +76,7 @@ QueryValues select(std::string table, Fields fields,
   }
 }
 
-  QueryValues selectCompare(std::string table, Fields fields,
+  ResultMap selectCompare(std::string table, Fields fields,
                             std::vector<CompFilter> filter = {})
   {
     try
@@ -101,7 +101,7 @@ QueryValues select(std::string table, Fields fields,
     }
   }
 
-  QueryValues selectMultiFilter(std::string table, Fields fields,
+  ResultMap selectMultiFilter(std::string table, Fields fields,
                                 std::vector<GenericFilter> filters,
                                 const OrderFilter&         order = OrderFilter{},
                                 const LimitFilter&         limit = LimitFilter{})
@@ -129,7 +129,7 @@ QueryValues select(std::string table, Fields fields,
   }
 
   template <typename FilterA, typename FilterB>
-  QueryValues selectMultiFilter(
+  ResultMap selectMultiFilter(
       std::string table, Fields fields,
       std::vector<std::variant<FilterA, FilterB>> filters)
       {
@@ -153,7 +153,7 @@ QueryValues select(std::string table, Fields fields,
   }
 
   template <typename FilterA, typename FilterB, typename FilterC>
-  QueryValues selectMultiFilter(
+  ResultMap selectMultiFilter(
       const std::string&                                          table,
       const Fields&                                               fields,
       const std::vector<std::variant<FilterA, FilterB, FilterC>>& filters,
@@ -184,7 +184,7 @@ QueryValues select(std::string table, Fields fields,
   }
 
   template <typename FilterA, typename FilterB>
-  QueryValues selectMultiFilter(const std::string&                          table,
+  ResultMap selectMultiFilter(const std::string&                          table,
                                 const Fields&                               fields,
                                 std::vector<std::variant<FilterA, FilterB>> filters,
                                 const OrderFilter&                          order,
@@ -213,7 +213,7 @@ QueryValues select(std::string table, Fields fields,
   }
 
   template <typename T = std::vector<QueryFilter>>
-  QueryValues selectJoin(const std::string& table,
+  ResultMap selectJoin(const std::string& table,
                          const Fields&      fields,
                          const T&           filters,
                          const Joins&       joins,
@@ -240,7 +240,7 @@ QueryValues select(std::string table, Fields fields,
     }
   }
 
-  QueryValues selectSimpleJoin(std::string table, Fields fields, QueryFilter filter, Join join)  const
+  ResultMap selectSimpleJoin(std::string table, Fields fields, QueryFilter filter, Join join)  const
   {
     try {
       SimpleJoinQuery select_query{

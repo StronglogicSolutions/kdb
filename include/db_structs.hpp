@@ -4,6 +4,7 @@
 #include <utility>
 #include <vector>
 #include <variant>
+#include <map>
 
 namespace kdb
 {
@@ -24,6 +25,7 @@ using QueryComparisonBetweenFilter = std::vector<FTuple>;
 using Values                       = std::vector<std::string>;
 using QueryValue                   = std::pair<std::string, std::string>;
 using QueryValues                  = std::vector<QueryValue>;
+using ResultMap                    = std::map<std::string, std::string>;
 
 struct identification
 {
@@ -245,7 +247,7 @@ std::vector<CompFilter> filter;
 
 struct QueryResult {
 std::string table;
-std::vector<std::pair<std::string, std::string>> values;
+ResultMap   values;
 };
 
 enum JoinType {
